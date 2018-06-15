@@ -1,0 +1,11 @@
+# dependencies
+/elm-stuff
+/tests/elm-stuff
+/node_modules
+
+# build
+/dist
+
+# misc
+*.swp
+.DS_Store
