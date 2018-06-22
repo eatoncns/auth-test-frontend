@@ -1,5 +1,6 @@
 require('./index.html');
-require('./style.css');
+require('bootstrap');
+require('./app.scss');
 const auth0 = require('auth0-js');
 
 const Elm = require('./Main.elm');
