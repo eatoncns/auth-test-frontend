@@ -9,7 +9,7 @@ const webAuth = new auth0.WebAuth({
   domain: 'meiertech.eu.auth0.com',
   clientID: 'mrIo511PuwoUHJlU61CaL9ey47TIxDw6',
   scope: 'openid profile email',
-  responseType: 'token',
+  responseType: 'id_token',
   redirectUri: 'http://localhost:3000',
 });
 const storedProfile = localStorage.getItem('profile');
@@ -33,24 +33,19 @@ webAuth.parseHash({ hash: window.location.hash }, (parseError, authResult) => {
     console.error(parseError);
   }
   if (authResult) {
-    webAuth.client.userInfo(authResult.accessToken, (err, profile) => {
-      console.log(profile);
-      const result = { err: null, ok: null };
-      const token = authResult.accessToken;
-
-      if (err) {
-        result.err = err.details;
-        result.err.name = result.err.name ? result.err.name : null;
-        result.err.code = result.err.code ? result.err.code : null;
-        result.err.statusCode = result.err.statusCode ? result.err.statusCode : null;
-      }
-      if (authResult) {
-        result.ok = { profile, token };
-        localStorage.setItem('profile', JSON.stringify(profile));
-        localStorage.setItem('token', token);
-      }
-      app.ports.auth0authResult.send(result);
-    });
+    const token = authResult.idToken;
+    const { email, email_verified } = authResult.idTokenPayload;
+    const profile = { email, email_verified };
+    const result = {
+      err: null,
+      ok: {
+        profile,
+        token,
+      },
+    };
+    localStorage.setItem('profile', JSON.stringify(profile));
+    localStorage.setItem('token', token);
+    app.ports.auth0authResult.send(result);
     window.location.hash = '';
   }
 });

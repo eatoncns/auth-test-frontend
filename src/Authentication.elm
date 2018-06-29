@@ -7,6 +7,7 @@ module Authentication
         , handleAuthResult
         , tryGetUserProfile
         , isLoggedIn
+        , getToken
         )
 
 import Auth0
@@ -86,3 +87,11 @@ isLoggedIn model =
 
         Auth0.LoggedOut ->
             False
+
+getToken : Model -> String
+getToken model =
+  case model.state of
+    Auth0.LoggedIn state ->
+      state.token
+    Auth0.LoggedOut ->
+      ""
